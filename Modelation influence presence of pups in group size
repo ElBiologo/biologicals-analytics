@@ -1,0 +1,33 @@
+install.packages("readxl")
+
+library(readxl)
+datos <- read_excel("D:/TESIS/modelo.xlsx", col_types = c("logical","numeric", "text", "text", 
+                                                          "logical", "logical", "logical"))
+
+install.packages('MASS')
+library(MASS)
+
+N_ind <- datos$`Tamaño del grupo`
+presencia_juveniles <- datos$`Presencia de juveniles`
+
+# Binomial negative model
+modelo_nb <- glm.nb(N_ind ~ presencia_juveniles, data = datos)
+summary(modelo_nb)
+
+nuevos <- data.frame(presencia_juveniles)
+nuevos$pred <- predict(modelo_nb, newdata = nuevos, type = "response")
+
+1.785124 #Prediction without pups
+5.724138 #Preduction with pups
+
+install.packages('graphics')
+library(graphics)
+
+summary(modelo_nb)
+
+# Comparation of real values vs prediction of model
+hist(residuals(modelo_nb, type = "deviance"),
+     breaks = 30,
+     main = "Distribución de los residuos (desviancia)",
+     xlab = "Residuos de desviancia",
+     col = "skyblue")
