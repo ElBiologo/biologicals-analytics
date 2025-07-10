@@ -1,0 +1,26 @@
+install.packages("readxl")
+library(readxl)
+
+datos <- read_excel("datos.xlsx", col_types = c("text", "numeric"))
+
+estaciones <- datos$Estación
+N_individuos <- datos$`N individuos`
+
+Kruskal_Wallis <- kruskal.test(N_individuos, estaciones, data = datos)
+
+install.packages("FSA")
+library(FSA)
+
+Post_hoc <- dunnTest(`N_individuos` ~ estaciones, data = datos, method = "holm")
+
+post_hoc_res <-Post_hoc$res
+
+
+boxplot(`N_individuos` ~ estaciones, data = datos,
+        col = "grey", main = "Tamaño de grupo por estación",
+        xlab = "Estación", ylab = "N° de individuos")
+
+install.packages("writexl")
+
+post_hoc_res <- as.data.frame(post_hoc_res)
+post_hoc-_res
